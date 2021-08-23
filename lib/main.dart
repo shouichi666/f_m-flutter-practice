@@ -76,15 +76,25 @@ class TopPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MovieModel>(
       builder: (context, model, child) {
+        // print(model.movies[1].posterPath);
+        print(model.update());
+
         return Container(
           height: double.infinity,
           child: ListView.builder(
             itemCount: model.movies.length,
             itemBuilder: (BuildContext context, int index) {
-              return Row(
-                children: [
-                  Text('${model.movies[index].title}'),
-                ],
+              return Container(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    children: [
+                      Image.network(
+                          'http://image.tmdb.org/t/p/w154${model.movies[index].posterPath}'),
+                      Text('${model.movies[index].title}'),
+                    ],
+                  ),
+                ),
               );
             },
           ),
