@@ -37,15 +37,19 @@ class Movie {
         voteAverage: json['vote_average'],
         title: json['title'],
         popularity: json['popularity'],
-        posterPath: json['poster_path'],
+        posterPath: 'http://image.tmdb.org/t/p/w154${json['poster_path']}',
+        // posterPath: json['poster_path'],
+        // posterPath: json['poster_path'],
         originalLanguage: json['original_language'],
         originalTitle: json['original_title'],
-        backdropPath: json['backdrop_path']);
+        backdropPath: 'http://image.tmdb.org/t/p/w154${json['backdrop_path']}');
   }
 }
 
 class Api {
   final key = dotenv.env['KEY'];
+
+  final lists = [];
 
   /// インスタンス
   static final Api _instance = Api._();
@@ -71,15 +75,18 @@ class Api {
   }
 }
 
-class MovieModel extends ChangeNotifier {
+class TopModel extends ChangeNotifier {
   /// アイテムリスト
   List<Movie> movies = [];
 
+  bool _isFetching = false;
+  bool get isFetching => _isFetching;
+
   /// アイテムリストの更新
   Future<void> update() async {
+    print(movies);
     // アイテムリストをAPIから取得する
     movies = await Api().get();
-    print(movies);
     // 変更を通知する
     notifyListeners();
   }
