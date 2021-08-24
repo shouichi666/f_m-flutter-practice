@@ -37,12 +37,13 @@ class Movie {
         voteAverage: json['vote_average'],
         title: json['title'],
         popularity: json['popularity'],
-        posterPath: 'http://image.tmdb.org/t/p/w154${json['poster_path']}',
+        posterPath: json['poster_path'],
         // posterPath: json['poster_path'],
         // posterPath: json['poster_path'],
         originalLanguage: json['original_language'],
         originalTitle: json['original_title'],
-        backdropPath: 'http://image.tmdb.org/t/p/w154${json['backdrop_path']}');
+        backdropPath:
+            'https://image.tmdb.org/t/p/w154${json['backdrop_path']}');
   }
 }
 
@@ -68,8 +69,8 @@ class Api {
         'https://api.themoviedb.org/3/movie/top_rated?api_key=$key&language=ja';
 
     final response = await http.get(Uri.parse(searchUrl));
-    print("=====================================-");
-    print(response);
+    // print("=====================================-");
+    // print(response);
     final List<dynamic> extractedData = json.decode(response.body)['results'];
     return extractedData.map((data) => Movie.fromJson(data)).toList();
   }
@@ -84,7 +85,7 @@ class TopModel extends ChangeNotifier {
 
   /// アイテムリストの更新
   Future<void> update() async {
-    print(movies);
+    // print(movies);
     // アイテムリストをAPIから取得する
     movies = await Api().get();
     // 変更を通知する

@@ -84,42 +84,69 @@ class TopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TopModel hoge = context.watch<TopModel>();
-    print(hoge.movies);
+    var movieList = hoge.movies;
+    // print(hoge.movies);
+    // print(movieList[1].backdropPath);
     return Container(
       height: double.infinity,
       child: ListView.builder(
-        // itemCount: model.movies.length,
-        itemCount: hoge.movies.length,
+        itemCount: movieList.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-            child: SizedBox(
-              width: double.infinity,
-              child: Column(
-                children: [
-                  Image.network(
-                    "${hoge.movies[index].posterPath}",
-                    errorBuilder: (c, o, s) {
-                      return const Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      );
-                    },
-                  ),
-                  Text('${hoge.movies[index].id}'),
-                  Text('${hoge.movies[index].video}'),
-                  Text('${hoge.movies[index].voteCount}'),
-                  Text('${hoge.movies[index].voteAverage}'),
-                  Text('${hoge.movies[index].popularity}'),
-                  Text('${hoge.movies[index].posterPath}'),
-                  Text('${hoge.movies[index].originalLanguage}'),
-                  Text('${hoge.movies[index].originalTitle}'),
-                  Text('${hoge.movies[index].backdropPath}'),
-                  Text('$index'),
-                  Padding(padding: EdgeInsets.all(40))
-                ],
+          if (movieList[index].posterPath != null) {
+            print('!null');
+            print(movieList[index].posterPath);
+          } else {
+            print('null');
+            print(movieList[index].posterPath);
+          }
+          if (movieList.length != 0) {
+            return Container(
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    Image.network(
+                      "https://image.tmdb.org/t/p/w154${movieList[index].posterPath}",
+                      errorBuilder: (c, o, s) {
+                        return const Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        );
+                      },
+                    ),
+                    // Image.network(
+                    //   "${movieList[index].posterPath}",
+                    //   errorBuilder: (c, o, s) {
+                    //     return const Icon(
+                    //       Icons.error,
+                    //       color: Colors.red,
+                    //     );
+                    //   },
+                    // ),
+                    Text('${movieList[index].id}'),
+                    Text('${movieList[index].video}'),
+                    Text('${movieList[index].voteCount}'),
+                    Text('${movieList[index].voteAverage}'),
+                    Text('${movieList[index].popularity}'),
+                    Text('${movieList[index].posterPath}'),
+                    Text('${movieList[index].originalLanguage}'),
+                    Text('${movieList[index].originalTitle}'),
+                    Text('${movieList[index].backdropPath}'),
+                    Text('$index'),
+                    Padding(padding: EdgeInsets.all(40))
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Container(
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.asset('images/logo.png'),
+              ),
+            );
+          }
         },
       ),
     );
