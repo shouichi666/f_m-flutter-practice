@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'ui/color.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'entity/topModel.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -81,6 +82,13 @@ class HomePage extends StatelessWidget {
 }
 
 class TopPage extends StatelessWidget {
+  static const List<StaggeredTile> _tiles = [
+    StaggeredTile.count(3, 4),
+    StaggeredTile.count(3, 4),
+    StaggeredTile.count(2, 3),
+    StaggeredTile.count(2, 3),
+    StaggeredTile.count(2, 3),
+  ];
   @override
   Widget build(BuildContext context) {
     final TopModel hoge = context.watch<TopModel>();
@@ -88,66 +96,36 @@ class TopPage extends StatelessWidget {
     // print(hoge.movies);
     // print(movieList[1].backdropPath);
     return Container(
-      height: double.infinity,
-      child: ListView.builder(
+      color: Colors.black87,
+      child: StaggeredGridView.countBuilder(
+        crossAxisCount: 6,
+        mainAxisSpacing: 6.0,
+        crossAxisSpacing: 6.0,
         itemCount: movieList.length,
         itemBuilder: (BuildContext context, int index) {
-          if (movieList[index].posterPath != null) {
-            print('!null');
-            print(movieList[index].posterPath);
-          } else {
-            print('null');
-            print(movieList[index].posterPath);
-          }
-          if (movieList.length != 0) {
-            return Container(
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    Image.network(
-                      "https://image.tmdb.org/t/p/w154${movieList[index].posterPath}",
-                      errorBuilder: (c, o, s) {
-                        return const Icon(
-                          Icons.error,
-                          color: Colors.red,
-                        );
-                      },
-                    ),
-                    // Image.network(
-                    //   "${movieList[index].posterPath}",
-                    //   errorBuilder: (c, o, s) {
-                    //     return const Icon(
-                    //       Icons.error,
-                    //       color: Colors.red,
-                    //     );
-                    //   },
-                    // ),
-                    Text('${movieList[index].id}'),
-                    Text('${movieList[index].video}'),
-                    Text('${movieList[index].voteCount}'),
-                    Text('${movieList[index].voteAverage}'),
-                    Text('${movieList[index].popularity}'),
-                    Text('${movieList[index].posterPath}'),
-                    Text('${movieList[index].originalLanguage}'),
-                    Text('${movieList[index].originalTitle}'),
-                    Text('${movieList[index].backdropPath}'),
-                    Text('$index'),
-                    Padding(padding: EdgeInsets.all(40))
-                  ],
-                ),
-              ),
-            );
-          } else {
-            return Container(
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: Image.asset('images/logo.png'),
-              ),
-            );
-          }
+          return _Tile(movieList[index].posterPath);
         },
+        staggeredTileBuilder: (int index) {
+          int _tileIndex = index % _tiles.length;
+          return _tiles[_tileIndex];
+        },
+      ),
+    );
+  }
+}
+
+class _Tile extends StatelessWidget {
+  _Tile(this.imgPath);
+
+  final String? imgPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(19.5)),
+        child: Image.network('https://image.tmdb.org/t/p/w154$imgPath',
+            fit: BoxFit.fitWidth),
       ),
     );
   }
@@ -170,3 +148,24 @@ class TvPage extends StatelessWidget {
     );
   }
 }
+
+
+  // Image.network(
+  //   "https://image.tmdb.org/t/p/w154${movieList[index].posterPath}",
+  //   errorBuilder: (c, o, s) {
+  //     return const Icon(
+  //       Icons.error,
+  //       color: Colors.red,
+  //     );
+  //   },
+  // ),
+  // Text('${movieList[index].id}'),
+  // Text('${movieList[index].video}'),
+  // Text('${movieList[index].voteCount}'),
+  // Text('${movieList[index].voteAverage}'),
+  // Text('${movieList[index].popularity}'),
+  // Text('${movieList[index].posterPath}'),
+  // Text('${movieList[index].originalLanguage}'),
+  // Text('${movieList[index].originalTitle}'),
+  // Text('${movieList[index].backdropPath}'),
+  // Text('$index'),
