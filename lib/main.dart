@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-// import 'package:provider/provider.dart'; //provider
 import 'ui/color.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'entity/topModel.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+import 'package:provider/provider.dart';
+import 'entity/topModel.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                   unselectedLabelColor: Colors.white,
                   tabs: <Tab>[
                     new Tab(text: "HOME"),
-                    new Tab(text: "TopModel"),
+                    new Tab(text: "MOVIE"),
                     new Tab(text: "TV"),
                   ],
                 ),
@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
               child: new TabBarView(
                 children: <Widget>[
                   TopPage(),
-                  TopModelPage(),
+                  MoviePage(),
                   TvPage(),
                 ],
               ),
@@ -82,37 +82,53 @@ class HomePage extends StatelessWidget {
 }
 
 class TopPage extends StatelessWidget {
-  static const List<StaggeredTile> _tiles = [
-    StaggeredTile.count(3, 4),
-    StaggeredTile.count(3, 4),
-    StaggeredTile.count(2, 3),
-    StaggeredTile.count(2, 3),
-    StaggeredTile.count(2, 3),
-  ];
   @override
   Widget build(BuildContext context) {
-    final TopModel hoge = context.watch<TopModel>();
-    var movieList = hoge.movies;
-    // print(hoge.movies);
-    // print(movieList[1].backdropPath);
     return Container(
-      color: Colors.black87,
-      child: StaggeredGridView.countBuilder(
-        crossAxisCount: 6,
-        mainAxisSpacing: 6.0,
-        crossAxisSpacing: 6.0,
-        itemCount: movieList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _Tile(movieList[index].posterPath);
+      child: ImageSlideshow(
+        width: double.infinity,
+        height: 200,
+        initialPage: 0,
+        indicatorColor: Colors.blue,
+        indicatorBackgroundColor: Colors.grey,
+        onPageChanged: (value) {
+          debugPrint('Page changed: $value');
         },
-        staggeredTileBuilder: (int index) {
-          int _tileIndex = index % _tiles.length;
-          return _tiles[_tileIndex];
-        },
+        autoPlayInterval: 3000,
+        isLoop: true,
+        children: [
+          Image.asset(
+            'images/youtube_profile_image.png',
+            fit: BoxFit.cover,
+          ),
+          Image.asset(
+            'images/youtube_profile_image.png',
+            fit: BoxFit.cover,
+          ),
+          Image.asset(
+            'images/youtube_profile_image.png',
+            fit: BoxFit.cover,
+          ),
+        ],
       ),
     );
   }
 }
+
+// class _Card extends StatelessWidget {
+//   _Card(this.imgPath);
+//   final String? imgPath;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ClipRRect(
+//       child: Image.network(
+//         'https://image.tmdb.org/t/p/w154$imgPath',
+//         fit: BoxFit.fitWidth,
+//       ),
+//     );
+//   }
+// }
 
 class _Tile extends StatelessWidget {
   _Tile(this.imgPath);
@@ -131,11 +147,33 @@ class _Tile extends StatelessWidget {
   }
 }
 
-class TopModelPage extends StatelessWidget {
+class MoviePage extends StatelessWidget {
+  static const List<StaggeredTile> _tiles = [
+    StaggeredTile.count(3, 4),
+    StaggeredTile.count(3, 4),
+    StaggeredTile.count(2, 3),
+    StaggeredTile.count(2, 3),
+    StaggeredTile.count(2, 3),
+  ];
   @override
   Widget build(BuildContext context) {
+    final TopModel hoge = context.watch<TopModel>();
+    var topLateList = hoge.topLate;
     return Container(
-      child: Text('MoviePage'),
+      color: Colors.black87,
+      child: StaggeredGridView.countBuilder(
+        crossAxisCount: 6,
+        mainAxisSpacing: 6.0,
+        crossAxisSpacing: 6.0,
+        itemCount: topLateList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _Tile(topLateList[index].posterPath);
+        },
+        staggeredTileBuilder: (int index) {
+          int _tileIndex = index % _tiles.length;
+          return _tiles[_tileIndex];
+        },
+      ),
     );
   }
 }
@@ -148,24 +186,3 @@ class TvPage extends StatelessWidget {
     );
   }
 }
-
-
-  // Image.network(
-  //   "https://image.tmdb.org/t/p/w154${movieList[index].posterPath}",
-  //   errorBuilder: (c, o, s) {
-  //     return const Icon(
-  //       Icons.error,
-  //       color: Colors.red,
-  //     );
-  //   },
-  // ),
-  // Text('${movieList[index].id}'),
-  // Text('${movieList[index].video}'),
-  // Text('${movieList[index].voteCount}'),
-  // Text('${movieList[index].voteAverage}'),
-  // Text('${movieList[index].popularity}'),
-  // Text('${movieList[index].posterPath}'),
-  // Text('${movieList[index].originalLanguage}'),
-  // Text('${movieList[index].originalTitle}'),
-  // Text('${movieList[index].backdropPath}'),
-  // Text('$index'),
