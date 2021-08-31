@@ -84,51 +84,50 @@ class HomePage extends StatelessWidget {
 class TopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final TopModel upComing = context.watch<TopModel>();
+    final upComigList = upComing.upcoming;
     return Container(
       child: ImageSlideshow(
-        width: double.infinity,
-        height: 200,
+        width: 20,
+        height: 50,
         initialPage: 0,
-        indicatorColor: Colors.blue,
+        indicatorColor: Colors.red,
         indicatorBackgroundColor: Colors.grey,
         onPageChanged: (value) {
           debugPrint('Page changed: $value');
         },
-        autoPlayInterval: 3000,
+        autoPlayInterval: 6000,
         isLoop: true,
         children: [
-          Image.asset(
-            'images/youtube_profile_image.png',
-            fit: BoxFit.cover,
-          ),
-          Image.asset(
-            'images/youtube_profile_image.png',
-            fit: BoxFit.cover,
-          ),
-          Image.asset(
-            'images/youtube_profile_image.png',
-            fit: BoxFit.cover,
-          ),
+          Expanded(flex: 1, child: _Card(upComigList[0].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[1].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[2].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[3].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[4].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[5].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[6].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[7].posterPath)),
+          Expanded(flex: 1, child: _Card(upComigList[8].posterPath)),
         ],
       ),
     );
   }
 }
 
-// class _Card extends StatelessWidget {
-//   _Card(this.imgPath);
-//   final String? imgPath;
+class _Card extends StatelessWidget {
+  final String? imgPath;
+  _Card(this.imgPath);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return ClipRRect(
-//       child: Image.network(
-//         'https://image.tmdb.org/t/p/w154$imgPath',
-//         fit: BoxFit.fitWidth,
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Image.network(
+        'https://image.tmdb.org/t/p/w154$imgPath',
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
 
 class _Tile extends StatelessWidget {
   _Tile(this.imgPath);
@@ -139,7 +138,9 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(19.5)),
+        borderRadius: BorderRadius.all(
+          Radius.circular(19.5),
+        ),
         child: Image.network('https://image.tmdb.org/t/p/w154$imgPath',
             fit: BoxFit.fitWidth),
       ),
