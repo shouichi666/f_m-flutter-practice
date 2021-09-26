@@ -184,6 +184,15 @@ class TvApi {
     final List<dynamic> hogeData = json.decode(res.body)['results'];
     return hogeData.map((data) => Tv.fromJson(data)).toList();
   }
+
+  Future<Map<String, dynamic>> getTvLasted() async {
+    var searchUrl = 'https://api.themoviedb.org/3/tv/latest?api_key=$key';
+
+    final response = await http.get(Uri.parse(searchUrl));
+    final Map<String, dynamic> map =
+        new Map<String, dynamic>.from(json.decode(response.body));
+    return map;
+  }
 }
 
 class MovieModel extends ChangeNotifier {
@@ -200,6 +209,7 @@ class MovieModel extends ChangeNotifier {
   List<Tv> tvTopLate = [];
   List<Tv> tvPopuler = [];
   List<Tv> tvOnTheAir = [];
+  Map<String, dynamic> tvLasted = {}; //
 
   bool _isFetching = false;
   bool get isFetching => _isFetching;
@@ -217,6 +227,7 @@ class MovieModel extends ChangeNotifier {
     tvTopLate = await TvApi().getTvTopLate();
     tvPopuler = await TvApi().getTvPupular();
     tvOnTheAir = await TvApi().getTvOnTheAir();
+    tvLasted = await TvApi().getTvLasted();
     // 変更を通知する
     notifyListeners();
   }

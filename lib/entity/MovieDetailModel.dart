@@ -47,9 +47,10 @@ class TvApi {
   //factory constracter
   factory TvApi() => _instance;
 
-  Future<Map<String, dynamic>> getTvDetail(int id) async {
+  Future<Map<String, dynamic>> getMovieDetail(int id) async {
     var searchUrl =
-        'https://api.themoviedb.org/3/tv/$id?api_key=$key&language=ja&page=1';
+        'https://api.themoviedb.org/3/movie/$id?api_key=$key&language=ja';
+
     final res = await http.get(Uri.parse(searchUrl));
     final Map<String, dynamic> map =
         new Map<String, dynamic>.from(json.decode(res.body));
@@ -57,9 +58,9 @@ class TvApi {
   }
 }
 
-class TvDetailModel extends ChangeNotifier {
+class MovieDetailModel extends ChangeNotifier {
   ///list tv
-  int _id = 0;
+  int _id = 1;
   Map<String, dynamic> detail = {};
 
   bool _isFetching = false;
@@ -70,11 +71,55 @@ class TvDetailModel extends ChangeNotifier {
 
   /// アイテムリストの更新
   Future<void> update() async {
-    detail = await TvApi().getTvDetail(_id);
+    _isFetching = false;
+    detail = {};
+    detail = await TvApi().getMovieDetail(_id);
+    _isFetching = true;
     // 変更を通知する
     notifyListeners();
   }
 }
+
+
+// {
+//   "adult":false,
+//   "backdrop_path":"/iTgM25ftE7YtFgZwUZupVp8A61S.jpg",
+//   "belongs_to_collection":null,
+//   "budget":18000000,
+//   "genres":[
+//     {"id":9648,"name":"謎"},
+//     {"id":53,"name":"スリラー"},
+//     {"id":27,"name":"ホラー"}
+//   ],
+//   "homepage":"https://www.old.movie/",
+//   "id":631843,
+//   "imdb_id":"tt10954652",
+//   "original_language":"en",
+//   "original_title":"Old",
+//   "overview":"「シックス・センス」「スプリット」のM・ナイト・シャマラン監督が、異常なスピードで時間が流れ、急速に年老いていくという不可解な現象に見舞われた一家の恐怖とサバイバルを描いたスリラー。人里離れた美しいビーチに、バカンスを過ごすためやってきた複数の家族。それぞれが楽しいひと時を過ごしていたが、そのうちのひとりの母親が、姿が見えなくなった息子を探しはじめた。ビーチにいるほかの家族にも、息子の行方を尋ねる母親。そんな彼女の前に、「僕はここにいるよ」と息子が姿を現す。しかし、6歳の少年だった息子は、少し目を離したすきに青年へと急成長していた。やがて彼らは、それぞれが急速に年老いていくことに気づく。ビーチにいた人々はすぐにその場を離れようとするが、なぜか意識を失ってしまうなど脱出することができず……。主人公一家の父親役をガエル・ガルシア・ベルナルが演じ、「ファントム・スレッド」のビッキー・クリーブス、「ジョジョ・ラビット」のトーマシン・マッケンジー、「ジュマンジ」シリーズのアレックス・ウルフらが共演する。",
+//   "popularity":1853.229,
+//   "poster_path":"/6VC8rOnA3eVzbEXMdLaTYuYwlby.jpg",
+//   "production_companies":[
+//     {"id":33,"logo_path":"/8lvHyhjr8oUKOOy2dKXoALWKdp0.png","name":"Universal Pictures","origin_country":"US"},
+//     {"id":12236,"logo_path":"/uV6QBPdn3MjQzAFdgEel6od7geg.png","name":"Blinding Edge Pictures","origin_country":"US"},
+//     {"id":10338,"logo_path":"/el2ap6lvjcEDdbyJoB3oKiYgXu9.png","name":"Perfect World Pictures","origin_country":"CN"}
+//   ],
+//   "production_countries":[
+//     {"iso_3166_1":"US","name":"United States of America"}
+//   ],
+//   "release_date":"2021-07-21",
+//   "revenue":89500000,
+//   "runtime":108,
+//   "spoken_languages":[
+//     {"english_name":"English","iso_639_1":"en","name":"English"}
+//   ],
+//   "status":"Released",
+//   "tagline":"",
+//   "title":"オールド",
+//   "video":false,
+//   "vote_average":6.8,
+//   "vote_count":862
+// }
 
 
 

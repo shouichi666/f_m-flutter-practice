@@ -4,8 +4,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'entity/MovieModel.dart';
-import 'entity/TvDetailModel.dart';
-import 'pages/tv_detail.dart';
+import 'entity/MovieDetailModel.dart';
+import 'pages/Movie_detail.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -13,7 +13,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MovieModel()),
-        ChangeNotifierProvider(create: (context) => TvDetailModel()),
+        ChangeNotifierProvider(create: (context) => MovieDetailModel()),
       ],
       child: MyApp(),
     ),
@@ -168,19 +168,32 @@ class CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.imgPath);
+  _Tile(this.imgPath, this.id);
 
   final String? imgPath;
+  final int? id;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(
-          Radius.circular(19.5),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(context) // NavigatorState を取得して
+              .push(
+            MaterialPageRoute(
+              // 新しいRoute を _history に追加
+              builder: (context) =>
+                  TvDetailPage(id ?? 0), // 追加した Route は詳細画面を構築する
+            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(19.5),
+          ),
+          child: Image.network('https://image.tmdb.org/t/p/w500$imgPath',
+              fit: BoxFit.contain),
         ),
-        child: Image.network('https://image.tmdb.org/t/p/w500$imgPath',
-            fit: BoxFit.contain),
       ),
     );
   }
@@ -297,11 +310,83 @@ class _LastedContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final MovieModel datas = context.watch<MovieModel>();
     final lasted = datas.lasted;
-    var img = (lasted['backdrop_path'] == null ? 0 : lasted['backdrop_path']);
+    // print(lasted);
+    var img = (lasted['poster_path'] == null ? 0 : lasted['poster_path']);
     var title = (lasted['title'] == null ? '' : lasted['title']);
     if (img != 0) {
       return Container(
-        child: Image.network('https://image.tmdb.org/t/p/w500$img'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.all(20)),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "追加作品(MOVIE)",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          child: Image.network(
+                            'https://image.tmdb.org/t/p/w500$img',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0.0,
+                          right: 0.0,
+                          child: Text(
+                            'No Image',
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                        ),
+                        Positioned(
+                          top: 20.0,
+                          right: 0.0,
+                          child: Text(
+                            lasted['adult'] == true ? 'アダルト' : '全年齢',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
     } else {
       return Container(
@@ -342,6 +427,177 @@ class _LastedContainer extends StatelessWidget {
                             'No Image',
                             style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
+                        ),
+                        Positioned(
+                          top: 20.0,
+                          right: 0.0,
+                          child: Text(
+                            lasted['adult'] == true ? 'アダルト' : '全年齢',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+}
+
+class _TvLastedContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final MovieModel datas = context.watch<MovieModel>();
+    final lasted = datas.tvLasted;
+    print(lasted);
+    var img = (lasted['backdrop_path'] == null ? 0 : lasted['backdrop_path']);
+    var title = (lasted['name'] == null ? '' : lasted['name']);
+    if (img != 0) {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.all(20)),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "追加作品(TV)",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          child: Image.network(
+                            'https://image.tmdb.org/t/p/w500$img',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0.0,
+                          right: 0.0,
+                          child: Text(
+                            'No Image',
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                        ),
+                        Positioned(
+                          top: 20.0,
+                          right: 0.0,
+                          child: Text(
+                            lasted['adult'] == true ? 'アダルト' : '全年齢',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.all(20)),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "追加作品（TV）",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          "images/no.png",
+                          width: double.infinity,
+                        ),
+                        Positioned(
+                          top: 0.0,
+                          right: 0.0,
+                          child: Text(
+                            'No Image',
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                        ),
+                        Positioned(
+                          top: 20.0,
+                          right: 0.0,
+                          child: Text(
+                            lasted['adult'] == true ? 'アダルト' : '全年齢',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -378,6 +634,7 @@ class TopPage extends StatelessWidget {
             children: [
               CarouselWithIndicator(),
               _LastedContainer(),
+              _TvLastedContainer(),
             ],
           ),
         ),
@@ -443,7 +700,8 @@ class MoviePage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(upComigList[idx].posterPath),
+                          child: _Tile(
+                              upComigList[idx].posterPath, upComigList[idx].id),
                         ),
                       );
                     }).toList(),
@@ -488,7 +746,8 @@ class MoviePage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(popularList[idx].posterPath),
+                          child: _Tile(
+                              popularList[idx].posterPath, popularList[idx].id),
                         ),
                       );
                     }).toList(),
@@ -533,7 +792,8 @@ class MoviePage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(topList[idx].posterPath),
+                          child:
+                              _Tile(topList[idx].posterPath, topList[idx].id),
                         ),
                       );
                     }).toList(),
@@ -578,7 +838,7 @@ class MoviePage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(now[idx].posterPath),
+                          child: _Tile(now[idx].posterPath, now[idx].id),
                         ),
                       );
                     }).toList(),
@@ -603,9 +863,6 @@ class TvPage extends StatelessWidget {
     final toLate = datas.tvTopLate;
     final popular = datas.tvPopuler;
     final onAir = datas.tvOnTheAir;
-    print(toLate);
-    print(popular);
-    print(onAir);
 
     if (toLate.length > 0 && popular.length > 0 && onAir.length > 0) {
       return Container(
@@ -664,7 +921,7 @@ class TvPage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(toLate[idx].posterPath),
+                          child: _Tile(toLate[idx].posterPath, toLate[idx].id),
                         ),
                       );
                     }).toList(),
@@ -709,7 +966,7 @@ class TvPage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(onAir[idx].posterPath),
+                          child: _Tile(onAir[idx].posterPath, onAir[idx].id),
                         ),
                       );
                     }).toList(),
@@ -754,7 +1011,8 @@ class TvPage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(popular[idx].posterPath),
+                          child:
+                              _Tile(popular[idx].posterPath, popular[idx].id),
                         ),
                       );
                     }).toList(),
