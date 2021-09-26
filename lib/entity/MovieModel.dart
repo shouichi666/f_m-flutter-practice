@@ -49,7 +49,7 @@ class Movie {
 
 class Tv {
   int? id;
-  double? voteAverage;
+  num voteAverage;
   String? backgroundPath;
   String? posterPath;
   String? name;
@@ -58,7 +58,7 @@ class Tv {
 
   Tv({
     this.id,
-    this.voteAverage,
+    this.voteAverage = 0.0,
     this.backgroundPath,
     this.posterPath,
     this.name,
@@ -147,7 +147,7 @@ class MovieApi {
 }
 
 class TvApi {
-  final key = dotenv.env['key'];
+  final key = dotenv.env['KEY'];
 
   ///instance
   static final TvApi _instance = TvApi._();
@@ -161,6 +161,24 @@ class TvApi {
   Future<List<Tv>> getTvTopLate() async {
     var searchUrl =
         'https://api.themoviedb.org/3/tv/top_rated?api_key=$key&language=ja&page=1';
+
+    final res = await http.get(Uri.parse(searchUrl));
+    final List<dynamic> hogeData = json.decode(res.body)['results'];
+    return hogeData.map((data) => Tv.fromJson(data)).toList();
+  }
+
+  Future<List<Tv>> getTvPupular() async {
+    var searchUrl =
+        'https://api.themoviedb.org/3/tv/popular?api_key=$key&language=ja&page=1';
+
+    final res = await http.get(Uri.parse(searchUrl));
+    final List<dynamic> hogeData = json.decode(res.body)['results'];
+    return hogeData.map((data) => Tv.fromJson(data)).toList();
+  }
+
+  Future<List<Tv>> getTvOnTheAir() async {
+    var searchUrl =
+        'https://api.themoviedb.org/3/tv/on_the_air?api_key=$key&language=ja&page=1';
 
     final res = await http.get(Uri.parse(searchUrl));
     final List<dynamic> hogeData = json.decode(res.body)['results'];
@@ -180,6 +198,8 @@ class MovieModel extends ChangeNotifier {
 
   ///list tv
   List<Tv> tvTopLate = [];
+  List<Tv> tvPopuler = [];
+  List<Tv> tvOnTheAir = [];
 
   bool _isFetching = false;
   bool get isFetching => _isFetching;
@@ -194,7 +214,9 @@ class MovieModel extends ChangeNotifier {
     trendDay = await MovieApi().getNowMovies();
     lasted = await MovieApi().getLastedMovies();
 
-    tvTopLate = await TvApi().getTvTopLate();//例外処理
+    tvTopLate = await TvApi().getTvTopLate();
+    tvPopuler = await TvApi().getTvPupular();
+    tvOnTheAir = await TvApi().getTvOnTheAir();
     // 変更を通知する
     notifyListeners();
   }
