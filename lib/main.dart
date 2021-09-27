@@ -110,10 +110,10 @@ class CarouselWithIndicatorState extends State<CarouselWithIndicator> {
                 options: CarouselOptions(
                     aspectRatio: 2.0,
                     enlargeCenterPage: false,
-                    enableInfiniteScroll: false,
+                    enableInfiniteScroll: true,
                     initialPage: 1,
                     autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 5),
+                    autoPlayInterval: Duration(seconds: 6),
                     onPageChanged: (index, reason) {
                       setState(() {
                         _current = index;
@@ -273,7 +273,7 @@ class _Panel extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 48.0,
+                  bottom: 58.0,
                   left: 0.0,
                   right: 200.0,
                   child: Container(
@@ -656,8 +656,20 @@ class MoviePage extends StatelessWidget {
         topList.length > 0 &&
         now.length > 0) {
       return Container(
-        padding: EdgeInsets.zero,
-        color: primaryBlack.shade900,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: FractionalOffset.topLeft,
+            end: FractionalOffset.bottomRight,
+            colors: [
+              Color(0xFF032617).withOpacity(0.9),
+              Color(0xFF000000).withOpacity(1),
+            ],
+            stops: const [
+              0.1,
+              1.1,
+            ],
+          ),
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

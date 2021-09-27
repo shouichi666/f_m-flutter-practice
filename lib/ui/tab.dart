@@ -265,10 +265,10 @@ class _TabUIState extends State<TabUI> with TickerProviderStateMixin {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: Container(
-          height: 3,
+          height: 2,
           width: _indicatorWidth - (horizontalPadding * 2),
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.blue.shade200,
               borderRadius: BorderRadius.circular(2.5),
               boxShadow: [
                 BoxShadow(

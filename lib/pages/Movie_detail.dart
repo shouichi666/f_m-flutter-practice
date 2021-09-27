@@ -119,7 +119,7 @@ class TvDetailPage extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 14, 0, 20),
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: Text(
                     detail['title'],
                     textAlign: TextAlign.start,
@@ -133,10 +133,12 @@ class TvDetailPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                      detail['overview'].length > 0
-                          ? detail['overview']
-                          : 'Sorry Non Overview',
-                      style: TextStyle(color: Colors.white, fontSize: 12)),
+                    detail['overview'].length > 0
+                        ? detail['overview']
+                        : 'Sorry Non Overview',
+                    style: TextStyle(
+                        color: Colors.blueGrey.shade100, fontSize: 12),
+                  ),
                 ),
                 // Text(id.toString(), style: TextStyle(color: Colors.white)),
                 Padding(padding: EdgeInsets.all(10)),
@@ -147,13 +149,13 @@ class TvDetailPage extends StatelessWidget {
                     Center(
                       child: Text(
                         '関連',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.blue.shade200),
                       ),
                     ),
                     Center(
                       child: Text(
                         '詳細',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.blue.shade200),
                       ),
                     ),
                   ], children: <Widget>[
@@ -222,7 +224,7 @@ class DetailList extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: [
-          ListTail('ジャンル', 'テテキスト', []),
+          ListTail('ジャンル', 'テテキスト', detail['genres']),
           ListTail('公開日', detail['release_date'], []),
           ListTail('上映時間', detail['runtime'].toString() + '分', []),
           ListTail('オリジナルタイトル', detail['original_title'], []),
@@ -238,7 +240,7 @@ class DetailList extends StatelessWidget {
 class ListTail extends StatelessWidget {
   final String heading;
   final String text;
-  final List<Map<String, dynamic>> list;
+  final List<dynamic> list;
 
   ListTail(this.heading, this.text, this.list);
 
@@ -257,7 +259,7 @@ class ListTail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (text.length != 0 && heading != 'home page') {
+    if (text.length != 0 && heading != 'home page' && list.length == 0) {
       return Container(
         decoration: BoxDecoration(
           border: Border(
@@ -289,6 +291,41 @@ class ListTail extends StatelessWidget {
                     fontSize: 12,
                   ),
                   textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else if (list.length > 0) {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.blue.shade100,
+              width: 0.3,
+            ),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 1, 8),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    heading,
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+              Padding(padding: EdgeInsets.all(2)),
+              Container(
+                width: double.infinity,
+                child: Text(
+                  'haretu ',
+                  style: TextStyle(color: Colors.blue.shade200, fontSize: 12),
                 ),
               ),
             ],
@@ -335,7 +372,8 @@ class ListTail extends StatelessWidget {
           ),
         ),
       );
+    } else {
+      return Container();
     }
-    return Container();
   }
 }
