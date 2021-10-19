@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:movie/ui/color.dart';
 import '../entity/MovieDetailModel.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../ui/tab.dart';
 
-class TvDetailPage extends StatelessWidget {
-  TvDetailPage(this.id);
-  final int id;
+class MovieDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MovieDetailModel datas = context.watch();
     final detail = datas.detail;
-    datas.addId(id);
-    if (detail['id'] != id) {
-      datas.update();
-    }
     // datas.update();
-    print(detail);
-    if (datas.isFetching) {
+    print('------- id -------');
+    if (datas.isFetching && datas.cast.length > 0 && datas.smiler.length > 0) {
       return Scaffold(
         appBar: AppBar(
           title: Text(detail['title'] ?? 'loading'),
@@ -121,7 +116,7 @@ class TvDetailPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: Text(
-                    detail['title'],
+                    detail['title'] ?? 'title',
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.white,
@@ -133,18 +128,14 @@ class TvDetailPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    detail['overview'].length > 0
-                        ? detail['overview']
-                        : 'Sorry Non Overview',
+                    detail['overview'] ?? 'Sorry Non Overview',
                     style: TextStyle(
                         color: Colors.blueGrey.shade100, fontSize: 12),
                   ),
                 ),
-                // Text(id.toString(), style: TextStyle(color: Colors.white)),
                 Padding(padding: EdgeInsets.all(10)),
                 SizedBox(
-                  width: double.infinity,
-                  height: 700,
+                  height: 620,
                   child: TabUI(key: GlobalKey(), tabs: [
                     Center(
                       child: Text(
@@ -161,16 +152,7 @@ class TvDetailPage extends StatelessWidget {
                   ], children: <Widget>[
                     Container(
                       child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '関連コンテンツ',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
-                          ),
-                        ],
+                        children: [SmilerSlider(), _CastTile()],
                       ),
                     ),
                     Container(
@@ -202,6 +184,68 @@ class TvDetailPage extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class SmilerSlider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final MovieDetailModel datas = context.watch();
+    final smiler = datas.smiler;
+    print(smiler.length);
+
+    return Container(
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 1, 8),
+                child: Text(
+                  '類似の作品',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          CarouselSlider.builder(
+            itemCount: smiler.length, //今だけ
+            itemBuilder: (context, index, realIdx) {
+              final int first = index * 2;
+              final int second = first + 1;
+              if (smiler.length > 0) {
+                return Row(
+                  children: [first, second].map((e) {
+                    return Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: _Tile(
+                          smiler[e].posterPath,
+                          smiler[e].id,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                );
+              } else {
+                return Container(
+                  child: Text('fvdosihjj'),
+                );
+              }
+            },
+            options: CarouselOptions(
+              aspectRatio: 3,
+              enableInfiniteScroll: true,
+              initialPage: 1,
+              autoPlay: false,
+              viewportFraction: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -375,5 +419,78 @@ class ListTail extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+}
+
+class _Tile extends StatelessWidget {
+  _Tile(
+    this.imgPath,
+    this.id,
+  );
+
+  final String? imgPath;
+  final int? id;
+
+  @override
+  Widget build(BuildContext context) {
+    final MovieDetailModel datas = context.watch();
+    final imgUrl = imgPath != null
+        ? 'https://image.tmdb.org/t/p/w500$imgPath'
+        : 'https://image.tmdb.org/t/p/w500//qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
+
+    return Container(
+      child: GestureDetector(
+        // onTap: () => datas.update(id ?? 0, 'updata'), 8
+        onTap: () {
+          datas.update(id ?? 0);
+          Navigator.of(context) // NavigatorState を取得して
+              .push(
+            MaterialPageRoute(
+              // 新しいRoute を _history に追加
+              builder: (context) =>
+                  MovieDetailPage(), // 追加した Route は詳細画面を構築する
+            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(19.5),
+          ),
+          child: Image.network(imgUrl.toString(), fit: BoxFit.contain),
+        ),
+      ),
+    );
+  }
+}
+
+class _CastTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10.0,
+      crossAxisSpacing: 5.0,
+      padding: EdgeInsets.all(10.0),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      children: <Widget>[
+        Container(
+          child: Text("One"),
+          color: Colors.blue[50],
+        ),
+        Container(
+          child: Text("Two"),
+          color: Colors.red[50],
+        ),
+        // Container(
+        //   child: Text("Three"),
+        //   color: Colors.green[50],
+        // ),
+        // Container(
+        //   child: Text("Four"),
+        //   color: Colors.yellow[50],
+        // ),
+      ],
+    );
   }
 }

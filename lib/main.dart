@@ -183,7 +183,7 @@ class _Tile extends StatelessWidget {
             MaterialPageRoute(
               // 新しいRoute を _history に追加
               builder: (context) =>
-                  TvDetailPage(id ?? 0), // 追加した Route は詳細画面を構築する
+                  MovieDetailPage(), // 追加した Route は詳細画面を構築する
             ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
           );
         },
@@ -217,7 +217,7 @@ class _Panel extends StatelessWidget {
           MaterialPageRoute(
             // 新しいRoute を _history に追加
             builder: (context) =>
-                TvDetailPage(id ?? 0), // 追加した Route は詳細画面を構築する
+                MovieDetailPage(), // 追加した Route は詳細画面を構築する
           ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
         );
       },

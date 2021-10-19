@@ -3,49 +3,89 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Tv {
+class Movie {
+  int? voteCount;
   int? id;
+  bool? video;
   num? voteAverage;
-  String? backgroundPath;
+  String title;
+  double? popularity;
   String? posterPath;
-  String? name;
-  String? originalName;
-  String? overView;
+  String? originalLanguage;
+  String? originalTitle;
+  String backdropPath = "";
+  String overview = "";
 
-  Tv({
+  Movie({
+    this.voteCount,
     this.id,
+    this.video,
     this.voteAverage,
-    this.backgroundPath,
+    this.title = "",
+    this.popularity,
     this.posterPath,
-    this.name,
-    this.originalName,
-    this.overView,
+    this.originalLanguage,
+    this.originalTitle,
+    this.backdropPath = "",
+    this.overview = "",
   });
 
-  factory Tv.fromJson(Map<String, dynamic> json) {
-    return Tv(
+  factory Movie.fromJson(Map<String, dynamic> json) {
+    return Movie(
+        voteCount: json['vote_count'],
+        id: json['id'],
+        video: json['video'],
+        voteAverage: json['vote_average'],
+        title: json['title'],
+        popularity: json['popularity'],
+        posterPath: json['poster_path'],
+        originalLanguage: json['original_language'],
+        originalTitle: json['original_title'],
+        overview: json['overview'],
+        backdropPath: json['backdrop_path'] ?? '');
+  }
+}
+
+class Cast {
+  int? id;
+  bool? adult;
+  int? gender;
+  String? name;
+  String? originalName;
+  String? profilePath;
+
+  Cast({
+    this.id,
+    this.adult,
+    this.gender,
+    this.name,
+    this.originalName,
+    this.profilePath,
+  });
+
+  factory Cast.fromJson(Map<String, dynamic> json) {
+    return Cast(
       id: json['id'],
-      voteAverage: json['vote_average'],
-      backgroundPath: json['background_path'],
-      posterPath: json['poster_path'],
+      adult: json['adult'],
+      gender: json['gender'],
       name: json['name'],
-      originalName: json['original_name'],
-      overView: json['over_view'],
+      originalName: json['originalName'],
+      profilePath: json['profilePath'],
     );
   }
 }
 
-class TvApi {
+class MovieApi {
   final key = dotenv.env['KEY'];
 
   ///instance
-  static final TvApi _instance = TvApi._();
+  static final MovieApi _instance = MovieApi._();
 
   //constracter
-  TvApi._();
+  MovieApi._();
 
   //factory constracter
-  factory TvApi() => _instance;
+  factory MovieApi() => _instance;
 
   Future<Map<String, dynamic>> getMovieDetail(int id) async {
     var searchUrl =
@@ -56,29 +96,59 @@ class TvApi {
         new Map<String, dynamic>.from(json.decode(res.body));
     return map;
   }
+
+  Future<List<Movie>> getSmilerMovies(int id) async {
+    var searchUrl =
+        'https://api.themoviedb.org/3/movie/$id/similar?api_key=$key&language=ja';
+
+    final res = await http.get(Uri.parse(searchUrl));
+    final List<dynamic> jsonDecode = json.decode(res.body)['results'];
+    final data = jsonDecode.map((json) => Movie.fromJson(json)).toList();
+    return data;
+  }
+
+  Future<List<Cast>> getCastMovies(int id) async {
+    var searchUrl =
+        'https://api.themoviedb.org/3/movie/$id/credits?api_key=$key&language=ja';
+
+    final res = await http.get(Uri.parse(searchUrl));
+    final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
+    final data = jsonDecode.map((json) => Cast.fromJson(json)).toList();
+    return data;
+  }
 }
 
 class MovieDetailModel extends ChangeNotifier {
   ///list tv
   int _id = 1;
   Map<String, dynamic> detail = {};
+  List<Movie> smiler = [];
+  List<Cast> cast = [];
 
   bool _isFetching = false;
   bool get isFetching => _isFetching;
-
   void addId(int id) => _id = id;
   int get getId => _id;
+  String first = 'first';
+
+  // void 
 
   /// アイテムリストの更新
-  Future<void> update() async {
-    _isFetching = false;
+  Future<void> update(id) async {
+    addId(id);
     detail = {};
-    detail = await TvApi().getMovieDetail(_id);
+    smiler = [];
+    // cast = [];
+    detail = await MovieApi().getMovieDetail(id);
+    smiler = await MovieApi().getSmilerMovies(id);
+    cast = await MovieApi().getCastMovies(id);
+    print(isFetching);
+    print(smiler);
+    print(cast);
     _isFetching = true;
-    // 変更を通知する
     notifyListeners();
   }
-}
+}           
 
 
 // {
