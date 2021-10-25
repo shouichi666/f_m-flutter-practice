@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:movie/ui/color.dart';
-import '../entity/MovieDetailModel.dart';
+import '../entity/TvDetailModel.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../ui/tab.dart';
 
-class MovieDetailPage extends StatelessWidget {
+class TvDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final MovieDetailModel datas = context.watch();
+    final TvDetailModel datas = context.watch();
     final detail = datas.detail;
     final img = detail['backdrop_path'] ?? 'qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
     if (datas.cast.length > 0 && datas.smiler.length > 0) {
@@ -188,7 +188,7 @@ class MovieDetailPage extends StatelessWidget {
 class SmilerSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final MovieDetailModel datas = context.watch();
+    final TvDetailModel datas = context.watch();
     final smiler = datas.smiler;
     return Container(
       width: double.infinity,
@@ -247,7 +247,7 @@ class SmilerSlider extends StatelessWidget {
 class CastSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final MovieDetailModel datas = context.watch();
+    final TvDetailModel datas = context.watch();
     final cast = datas.cast;
 
     return Container(
@@ -488,7 +488,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MovieDetailModel datas = context.watch();
+    final TvDetailModel datas = context.watch();
     final imgUrl = imgPath != null
         ? 'https://image.tmdb.org/t/p/w500$imgPath'
         : 'https://image.tmdb.org/t/p/w500//qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
@@ -501,7 +501,7 @@ class _Tile extends StatelessWidget {
               .push(
             MaterialPageRoute(
               // 新しいRoute を _history に追加
-              builder: (context) => MovieDetailPage(), // 追加した Route は詳細画面を構築する
+              builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
             ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
           );
         },
@@ -528,7 +528,7 @@ class _TileCast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(imgPath);
-    final MovieDetailModel datas = context.watch();
+    final TvDetailModel datas = context.watch();
     final imgUrl = imgPath != null
         ? 'https://image.tmdb.org/t/p/w185/$imgPath'
         : 'https://image.tmdb.org/t/p/w500/qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
@@ -543,7 +543,7 @@ class _TileCast extends StatelessWidget {
               .push(
             MaterialPageRoute(
               // 新しいRoute を _history に追加
-              builder: (context) => MovieDetailPage(), // 追加した Route は詳細画面を構築する
+              builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
             ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
           );
         },

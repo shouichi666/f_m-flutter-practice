@@ -5,7 +5,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'entity/MovieModel.dart';
 import 'entity/MovieDetailModel.dart';
+import 'entity/TvDetailModel.dart';
 import 'pages/Movie_detail.dart';
+import 'pages/Tv_detail.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -14,6 +16,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => MovieModel()),
         ChangeNotifierProvider(create: (context) => MovieDetailModel()),
+        ChangeNotifierProvider(create: (context) => TvDetailModel()),
       ],
       child: MyApp(),
     ),
@@ -175,15 +178,49 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MovieDetailModel detail = context.watch();
     return Container(
       child: GestureDetector(
         onTap: () {
+          detail.update(id ?? 0);
           Navigator.of(context) // NavigatorState を取得して
               .push(
             MaterialPageRoute(
               // 新しいRoute を _history に追加
-              builder: (context) =>
-                  MovieDetailPage(), // 追加した Route は詳細画面を構築する
+              builder: (context) => MovieDetailPage(), // 追加した Route は詳細画面を構築する
+            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(
+            Radius.circular(19.5),
+          ),
+          child: Image.network('https://image.tmdb.org/t/p/w500$imgPath',
+              fit: BoxFit.contain),
+        ),
+      ),
+    );
+  }
+}
+
+class _TileTv extends StatelessWidget {
+  _TileTv(this.imgPath, this.id);
+
+  final String? imgPath;
+  final int? id;
+
+  @override
+  Widget build(BuildContext context) {
+    final TvDetailModel detail = context.watch();
+    return Container(
+      child: GestureDetector(
+        onTap: () {
+          detail.update(id ?? 0);
+          Navigator.of(context) // NavigatorState を取得して
+              .push(
+            MaterialPageRoute(
+              // 新しいRoute を _history に追加
+              builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
             ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
           );
         },
@@ -210,14 +247,15 @@ class _Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MovieDetailModel datas = context.watch();
     return GestureDetector(
       onTap: () {
+        datas.update(id ?? 0);
         Navigator.of(context) // NavigatorState を取得して
             .push(
           MaterialPageRoute(
             // 新しいRoute を _history に追加
-            builder: (context) =>
-                MovieDetailPage(), // 追加した Route は詳細画面を構築する
+            builder: (context) => MovieDetailPage(), // 追加した Route は詳細画面を構築する
           ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
         );
       },
@@ -933,7 +971,8 @@ class TvPage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(toLate[idx].posterPath, toLate[idx].id),
+                          child:
+                              _TileTv(toLate[idx].posterPath, toLate[idx].id),
                         ),
                       );
                     }).toList(),
@@ -978,7 +1017,7 @@ class TvPage extends StatelessWidget {
                         flex: 1,
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
-                          child: _Tile(onAir[idx].posterPath, onAir[idx].id),
+                          child: _TileTv(onAir[idx].posterPath, onAir[idx].id),
                         ),
                       );
                     }).toList(),
@@ -1024,7 +1063,7 @@ class TvPage extends StatelessWidget {
                         child: Container(
                           margin: EdgeInsets.symmetric(horizontal: 3),
                           child:
-                              _Tile(popular[idx].posterPath, popular[idx].id),
+                              _TileTv(popular[idx].posterPath, popular[idx].id),
                         ),
                       );
                     }).toList(),

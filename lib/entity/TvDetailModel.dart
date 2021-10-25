@@ -3,7 +3,75 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Movie {
+
+// {
+//   "backdrop_path":"/se2jymoLDghIrLewQismwfmWG.jpg",
+//   "created_by":[],
+//   "episode_run_time":[60],
+//   "first_air_date":"2005-06-08",
+//   "genres":[],
+//   "homepage":"",
+//   "id":11,
+//   "in_production":false,
+//   "languages":["en"],
+//   "last_air_date":"2005-08-24",
+//   "last_episode_to_air":{
+//     "air_date":"2005-08-24",
+//     "episode_number":10,
+//     "id":1130622,
+//     "name":"",
+//     "overview":"",
+//     "production_code":"",
+//     "season_number":1,
+//     "still_path":null,
+//     "vote_average":0.0,
+//     "vote_count":0
+//   },
+//   "name":"Strictly Sex with Dr. Drew",
+//   "next_episode_to_air":null,
+//   "networks":[
+//     {
+//       "name":"Discovery Health Channel",
+//       "id":10,
+//       "logo_path":"/yiBepnHS6gdzlT6ZIehYnNl0nEG.png",
+//       "origin_country":"US"
+//     }
+//   ],
+//   "number_of_episodes":10,
+//   "number_of_seasons":1,
+//   "origin_country":["US"],
+//   "original_language":"en",
+//   "original_name":"Strictly Sex with Dr. Drew",
+//   "overview":"","popularity":1.092,
+//   "poster_path":"/3hFpUg6Ty25Vs5XgbnNz1Xcirb5.jpg",
+//   "production_companies":[],
+//   "production_countries":[],
+//   "seasons":[
+//     {
+//       "air_date":"2005-06-08",
+//       "episode_count":10,
+//       "id":2328145,
+//       "name":"Season 1",
+//       "overview":"",
+//       "poster_path":null,
+//       "season_number":1
+//       }
+//   ],"spoken_languages":[
+//     {
+//       "english_name":"English",
+//       "iso_639_1":"en",
+//       "name":"English"
+//       }
+//   ],
+//   "status":"Ended",
+//   "tagline":"",
+//   "type":"Scripted",
+//   "vote_average":0.0,
+//   "vote_count":0
+// }
+
+
+class Tv {
   int? voteCount;
   int? id;
   bool? video;
@@ -16,7 +84,7 @@ class Movie {
   String backdropPath = "";
   String overview = "";
 
-  Movie({
+  Tv({
     this.voteCount,
     this.id,
     this.video,
@@ -30,8 +98,8 @@ class Movie {
     this.overview = "",
   });
 
-  factory Movie.fromJson(Map<String, dynamic> json) {
-    return Movie(
+  factory Tv.fromJson(Map<String, dynamic> json) {
+    return Tv(
         voteCount: json['vote_count'],
         id: json['id'],
         video: json['video'],
@@ -75,21 +143,21 @@ class Cast {
   }
 }
 
-class MovieApi {
+class TvApi {
   final key = dotenv.env['KEY'];
 
   ///instance
-  static final MovieApi _instance = MovieApi._();
+  static final TvApi _instance = TvApi._();
 
   //constracter
-  MovieApi._();
+  TvApi._();
 
   //factory constracter
-  factory MovieApi() => _instance;
+  factory TvApi() => _instance;
 
   Future<Map<String, dynamic>> getMovieDetail(int id) async {
     var searchUrl =
-        'https://api.themoviedb.org/3/movie/$id?api_key=$key&language=ja';
+        'https://api.themoviedb.org/3/tv/$id?api_key=$key&language=ja';
 
     final res = await http.get(Uri.parse(searchUrl));
     final Map<String, dynamic> map =
@@ -97,19 +165,19 @@ class MovieApi {
     return map;
   }
 
-  Future<List<Movie>> getSmilerMovies(int id) async {
+  Future<List<Tv>> getSmilerTv(int id) async {
     var searchUrl =
-        'https://api.themoviedb.org/3/movie/$id/similar?api_key=$key&language=ja';
+        'https://api.themoviedb.org/3/tv/$id/similar?api_key=$key&language=ja';
 
     final res = await http.get(Uri.parse(searchUrl));
     final List<dynamic> jsonDecode = json.decode(res.body)['results'];
-    final data = jsonDecode.map((json) => Movie.fromJson(json)).toList();
+    final data = jsonDecode.map((json) => Tv.fromJson(json)).toList();
     return data;
   }
 
-  Future<List<Cast>> getCastMovies(int id) async {
+  Future<List<Cast>> getCastTv(int id) async {
     var searchUrl =
-        'https://api.themoviedb.org/3/movie/$id/credits?api_key=$key&language=ja';
+        'https://api.themoviedb.org/3/tv/$id/credits?api_key=$key&language=ja';
 
     final res = await http.get(Uri.parse(searchUrl));
     final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
@@ -118,11 +186,11 @@ class MovieApi {
   }
 }
 
-class MovieDetailModel extends ChangeNotifier {
+class TvDetailModel extends ChangeNotifier {
   ///list tv
   int _id = 1;
   Map<String, dynamic> detail = {};
-  List<Movie> smiler = [];
+  List<Tv> smiler = [];
   List<Cast> cast = [];
 
   bool _isFetching = false;
@@ -139,9 +207,9 @@ class MovieDetailModel extends ChangeNotifier {
     detail = {};
     smiler = [];
     // cast = [];
-    detail = await MovieApi().getMovieDetail(id);
-    smiler = await MovieApi().getSmilerMovies(id);
-    cast = await MovieApi().getCastMovies(id);
+    detail = await TvApi().getMovieDetail(id);
+    smiler = await TvApi().getSmilerTv(id);
+    cast = await TvApi().getCastTv(id);
     print(isFetching);
     print(smiler);
     print(cast);
