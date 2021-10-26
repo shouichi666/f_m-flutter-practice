@@ -221,7 +221,7 @@ class _TileTv extends StatelessWidget {
             MaterialPageRoute(
               // 新しいRoute を _history に追加
               builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
-            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
+            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行=
           );
         },
         child: ClipRRect(

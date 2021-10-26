@@ -15,7 +15,7 @@ class TvDetailPage extends StatelessWidget {
     if (datas.cast.length > 0 && datas.smiler.length > 0) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(detail['title'] ?? 'loading'),
+          title: Text(detail['name'] ?? 'loading'),
         ),
         body: Container(
           color: primaryBlack.shade900,
@@ -114,7 +114,7 @@ class TvDetailPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: Text(
-                    detail['title'] ?? 'title',
+                    detail['name'] ?? 'title',
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.white,
@@ -323,13 +323,13 @@ class DetailList extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: [
-          ListTail('ジャンル', 'テテキスト', detail['genres']),
-          ListTail('公開日', detail['release_date'], []),
-          ListTail('上映時間', detail['runtime'].toString() + '分', []),
-          ListTail('オリジナルタイトル', detail['original_title'], []),
+          ListTail('ジャンル', 'テキスト', detail['genres']),
+          ListTail('初放送日', detail['first_air_date'], []),
+          ListTail('上映時間', detail['episode_run_time'][0].toString() + '分', []),
+          ListTail('オリジナルタイトル', detail['original_title'] ?? 'non', []),
           ListTail('評価', detail['vote_average'].toString(), []),
           ListTail('評価数', detail['vote_count'].toString(), []),
-          ListTail('home page', detail['homepage'].toString(), []),
+          // ListTail('home page', detail['homepage'].toString(), []),
         ],
       ),
     );

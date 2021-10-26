@@ -3,7 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
 // {
 //   "backdrop_path":"/se2jymoLDghIrLewQismwfmWG.jpg",
 //   "created_by":[],
@@ -70,32 +69,37 @@ import 'dart:convert';
 //   "vote_count":0
 // }
 
-
 class Tv {
   int? voteCount;
   int? id;
   bool? video;
   num? voteAverage;
-  String title;
+  String name;
+  String originalName;
   double? popularity;
   String? posterPath;
   String? originalLanguage;
   String? originalTitle;
   String backdropPath = "";
   String overview = "";
+  String status = "";
+  String firstAirDate = "";
 
   Tv({
     this.voteCount,
     this.id,
     this.video,
     this.voteAverage,
-    this.title = "",
+    this.name = "",
+    this.originalName = "",
     this.popularity,
     this.posterPath,
     this.originalLanguage,
     this.originalTitle,
     this.backdropPath = "",
     this.overview = "",
+    this.status = "",
+    this.firstAirDate = "",
   });
 
   factory Tv.fromJson(Map<String, dynamic> json) {
@@ -104,13 +108,16 @@ class Tv {
         id: json['id'],
         video: json['video'],
         voteAverage: json['vote_average'],
-        title: json['title'],
+        name: json['name'],
+        originalName: json['original_name'],
         popularity: json['popularity'],
         posterPath: json['poster_path'],
         originalLanguage: json['original_language'],
         originalTitle: json['original_title'],
         overview: json['overview'],
-        backdropPath: json['backdrop_path'] ?? '');
+        backdropPath: json['backdrop_path'] ?? '',
+        status: json['status'] ?? '',
+        firstAirDate: json['first_air_dat'] ?? '');
   }
 }
 
@@ -140,7 +147,7 @@ class Cast {
       originalName: json['original_name'],
       profilePath: json['profile_path'],
     );
-  }
+  } 
 }
 
 class TvApi {
