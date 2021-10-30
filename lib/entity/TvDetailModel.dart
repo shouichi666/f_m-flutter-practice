@@ -147,7 +147,7 @@ class Cast {
       originalName: json['original_name'],
       profilePath: json['profile_path'],
     );
-  } 
+  }
 }
 
 class TvApi {
@@ -187,9 +187,36 @@ class TvApi {
         'https://api.themoviedb.org/3/tv/$id/credits?api_key=$key&language=ja';
 
     final res = await http.get(Uri.parse(searchUrl));
-    final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
-    final data = jsonDecode.map((json) => Cast.fromJson(json)).toList();
-    return data;
+    print('res _________________________');
+    print(res.statusCode == 200);
+    // final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
+    // final data = jsonDecode.map((json) => Cast.fromJson(json)).toList();
+    // print(jsonDecode);
+    // return data;
+
+    if (res.statusCode == 200) {
+      final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
+      final data = jsonDecode.map((json) => Cast.fromJson(json)).toList();
+      return data;
+    } else {
+      final Map<String, dynamic> json = {
+        'adult': false,
+        'gender': 2,
+        'id': 18702,
+        'known_for_department': 'Acting',
+        'name': 'Mark Dacascos',
+        'original_name': 'Mark Dacascos',
+        'popularity': 7.899,
+        'profile_path': '/trOACuJz1KzhB51qe6asaxRuxrh.jpg',
+        'character': 'Eric Draven',
+        'credit_id': '52582b20760ee36aaa873014',
+        'order': 0
+      };
+
+      final data = Cast.fromJson(json);
+
+      return [data];
+    }
   }
 }
 
@@ -210,15 +237,15 @@ class TvDetailModel extends ChangeNotifier {
 
   /// アイテムリストの更新
   Future<void> update(id) async {
-    addId(id);
+    // addId(id);
     detail = {};
     smiler = [];
-    // cast = [];
+    cast = [];
     detail = await TvApi().getMovieDetail(id);
     smiler = await TvApi().getSmilerTv(id);
     cast = await TvApi().getCastTv(id);
-    print(isFetching);
-    print(smiler);
+    // print(isFetching);
+    // print(smiler);
     print(cast);
     _isFetching = true;
     notifyListeners();

@@ -12,7 +12,7 @@ class TvDetailPage extends StatelessWidget {
     final TvDetailModel datas = context.watch();
     final detail = datas.detail;
     final img = detail['backdrop_path'] ?? 'qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
-    if (datas.cast.length > 0 && datas.smiler.length > 0) {
+    if (datas.smiler.length > 0 && datas.cast.length > 0) {
       return Scaffold(
         appBar: AppBar(
           title: Text(detail['name'] ?? 'loading'),
@@ -149,11 +149,39 @@ class TvDetailPage extends StatelessWidget {
                     ),
                   ], children: <Widget>[
                     Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: FractionalOffset.topLeft,
+                          end: FractionalOffset.bottomRight,
+                          colors: [
+                            Color(0xFF000524).withOpacity(0.9),
+                            Color(0xFF000000).withOpacity(1),
+                          ],
+                          stops: const [
+                            0.1,
+                            1.1,
+                          ],
+                        ),
+                      ),
                       child: Column(
                         children: [SmilerSlider(), CastSlider()],
                       ),
                     ),
                     Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: FractionalOffset.topLeft,
+                          end: FractionalOffset.bottomRight,
+                          colors: [
+                            Color(0xFF000524).withOpacity(0.9),
+                            Color(0xFF000000).withOpacity(1),
+                          ],
+                          stops: const [
+                            0.1,
+                            1.1,
+                          ],
+                        ),
+                      ),
                       child: DetailList(detail),
                     ),
                   ]),
@@ -207,15 +235,17 @@ class SmilerSlider extends StatelessWidget {
             ],
           ),
           CarouselSlider.builder(
-            itemCount: (smiler.length / 2).round(),
+            itemCount: (smiler.length / 4).round() - 1,
             itemBuilder: (context, index, realIdx) {
-              final int first = index * 2;
+              final int first = index * 4;
               final int second = first + 1;
+              final int third = first + 2;
+              final int fourth = first + 3;
               if (smiler.length > 0) {
                 return Row(
-                  children: [first, second].map((e) {
+                  children: [first, second, third, fourth].map((e) {
                     return Expanded(
-                      flex: 1,
+                      flex: 4,
                       child: Container(
                         child: _Tile(
                           smiler[e].posterPath,
@@ -232,7 +262,8 @@ class SmilerSlider extends StatelessWidget {
               }
             },
             options: CarouselOptions(
-              aspectRatio: 2,
+              aspectRatio: 3,
+              initialPage: 1,
               enableInfiniteScroll: false,
               autoPlay: false,
               viewportFraction: 1,
@@ -267,19 +298,25 @@ class CastSlider extends StatelessWidget {
             ],
           ),
           CarouselSlider.builder(
-            itemCount: (cast.length / 2).round(),
+            itemCount: (cast.length / 4).round() - 1,
             itemBuilder: (context, index, realIdx) {
-              final int first = index * 2;
+              final int first = index * 4;
               final int second = first + 1;
-              if (cast.length > 0) {
+              final int third = first + 2;
+              final int fourth = first + 3;
+              if (cast.length > 1) {
                 return Row(
-                  children: [first, second].map((e) {
+                  children: [first, second, third, fourth].map((e) {
+                    print(cast.length);
+                    final n = e > cast.length - 1 ? 0 : e;
+
                     return Expanded(
-                      flex: 2,
+                      flex: 1,
                       child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 3),
                         child: _TileCast(
-                          cast[e].profilePath,
-                          cast[e].id,
+                          cast[n].profilePath,
+                          cast[n].id,
                         ),
                       ),
                     );
@@ -292,7 +329,7 @@ class CastSlider extends StatelessWidget {
               }
             },
             options: CarouselOptions(
-              aspectRatio: 2,
+              aspectRatio: 3,
               enableInfiniteScroll: false,
               autoPlay: false,
               viewportFraction: 1,
@@ -497,13 +534,6 @@ class _Tile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           datas.update(id ?? 0);
-          Navigator.of(context) // NavigatorState を取得して
-              .push(
-            MaterialPageRoute(
-              // 新しいRoute を _history に追加
-              builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
-            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
-          );
         },
         child: ClipRRect(
           borderRadius: BorderRadius.all(

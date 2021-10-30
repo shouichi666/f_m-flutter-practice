@@ -738,14 +738,16 @@ class MoviePage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (upComigList.length / 4).round(),
+                itemCount: (upComigList.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -784,14 +786,16 @@ class MoviePage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (popularList.length / 2).round(),
+                itemCount: (popularList.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -830,14 +834,16 @@ class MoviePage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (topList.length / 2).round(),
+                itemCount: (topList.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -876,14 +882,16 @@ class MoviePage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (now.length / 2).round(),
+                itemCount: (now.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -959,14 +967,16 @@ class TvPage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (toLate.length / 4).round(),
+                itemCount: (toLate.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -1005,14 +1015,16 @@ class TvPage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (onAir.length / 4).round(),
+                itemCount: (onAir.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
@@ -1050,14 +1062,16 @@ class TvPage extends StatelessWidget {
                   initialPage: 1,
                   autoPlay: false,
                   enlargeCenterPage: false,
-                  viewportFraction: 0.5,
+                  viewportFraction: 1,
                 ),
-                itemCount: (popular.length / 4).round(),
+                itemCount: (popular.length / 4).round() - 1,
                 itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
+                  final int first = index * 4;
                   final int second = first + 1;
+                  final int third = first + 2;
+                  final int fourth = first + 3;
                   return Row(
-                    children: [first, second].map((idx) {
+                    children: [first, second, third, fourth].map((idx) {
                       return Expanded(
                         flex: 1,
                         child: Container(
