@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:movie/ui/color.dart';
 import '../entity/TvDetailModel.dart';
+import '../entity/CastDetailModel.dart';
+import 'Cast_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../ui/tab.dart';
@@ -39,10 +41,11 @@ class TvDetailPage extends StatelessWidget {
                             tileMode: TileMode.mirror,
                           ).createShader(bounds);
                         },
-                        child: Image.network(
-                          'https://image.tmdb.org/t/p/w500' + img,
-                          height: 200,
-                          width: double.infinity,
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'images/logo_transparent.png',
+                          image: 'https://image.tmdb.org/t/p/w500' + img,
+                          fit: BoxFit.contain,
+                          fadeInCurve: Curves.linear,
                         ),
                       ),
                     ),
@@ -539,7 +542,12 @@ class _Tile extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(19.5),
           ),
-          child: Image.network(imgUrl.toString(), fit: BoxFit.contain),
+          child: FadeInImage.assetNetwork(
+            placeholder: 'images/logo_transparent.png',
+            image: imgUrl,
+            fit: BoxFit.contain,
+            fadeInCurve: Curves.linear,
+          ),
         ),
       ),
     );
@@ -557,23 +565,20 @@ class _TileCast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(imgPath);
-    final TvDetailModel datas = context.watch();
+    final CastDetailModel datas = context.watch();
     final imgUrl = imgPath != null
         ? 'https://image.tmdb.org/t/p/w185/$imgPath'
         : 'https://image.tmdb.org/t/p/w500/qD45xHA35HdJDGOaA1AgDwiWEgO.jpg';
 
-    print(imgUrl);
-
     return Container(
       child: GestureDetector(
-        onTap: () {
-          datas.update(id ?? 0);
+        onTap: () async {
+          await datas.update(id ?? 0);
           Navigator.of(context) // NavigatorState を取得して
               .push(
             MaterialPageRoute(
               // 新しいRoute を _history に追加
-              builder: (context) => TvDetailPage(), // 追加した Route は詳細画面を構築する
+              builder: (context) => CastDetailPage(), // 追加した Route は詳細画面を構築する
             ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
           );
         },
@@ -581,7 +586,14 @@ class _TileCast extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(19.5),
           ),
-          child: Image.network(imgUrl.toString(), fit: BoxFit.contain),
+          child: FadeInImage.assetNetwork(
+            placeholder: 'images/logo_transparent.png',
+            image: imgUrl,
+            fit: BoxFit.contain,
+            fadeInCurve: Curves.ease,
+            fadeInDuration: Duration(milliseconds: 100),
+            fadeOutDuration: Duration(milliseconds: 100),
+          ),
         ),
       ),
     );

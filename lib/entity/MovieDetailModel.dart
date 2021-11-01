@@ -48,28 +48,16 @@ class Movie {
 
 class Cast {
   int? id;
-  bool? adult;
-  int? gender;
-  String? name;
-  String? originalName;
   String? profilePath;
 
   Cast({
     this.id,
-    this.adult,
-    this.gender,
-    this.name,
-    this.originalName,
     this.profilePath,
   });
 
   factory Cast.fromJson(Map<String, dynamic> json) {
     return Cast(
       id: json['id'],
-      adult: json['adult'],
-      gender: json['gender'],
-      name: json['name'],
-      originalName: json['original_name'],
       profilePath: json['profile_path'],
     );
   }

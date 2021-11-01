@@ -6,8 +6,11 @@ import 'package:provider/provider.dart';
 import 'entity/MovieModel.dart';
 import 'entity/MovieDetailModel.dart';
 import 'entity/TvDetailModel.dart';
+import 'entity/CastDetailModel.dart';
+import 'entity/SearchModel.dart';
 import 'pages/Movie_detail.dart';
 import 'pages/Tv_detail.dart';
+import 'pages/Search.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
@@ -17,6 +20,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => MovieModel()),
         ChangeNotifierProvider(create: (context) => MovieDetailModel()),
         ChangeNotifierProvider(create: (context) => TvDetailModel()),
+        ChangeNotifierProvider(create: (context) => CastDetailModel()),
+        ChangeNotifierProvider(create: (context) => SearchModel()),
       ],
       child: MyApp(),
     ),
@@ -82,6 +87,19 @@ class HomePage extends StatelessWidget {
               ),
             );
           }),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.search),
+          backgroundColor: Colors.amber[900],
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => Search(),
+                fullscreenDialog: false, // true だとモーダル遷移になる
+              ),
+            );
+          },
         ),
       ),
     );
@@ -183,20 +201,24 @@ class _Tile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           detail.update(id ?? 0);
-          Navigator.of(context) // NavigatorState を取得して
-              .push(
+          Navigator.of(context).push(
             MaterialPageRoute(
-              // 新しいRoute を _history に追加
-              builder: (context) => MovieDetailPage(), // 追加した Route は詳細画面を構築する
-            ), // push() の中ではアニメーションしながら詳細画面を表示する処理を実行
+              builder: (context) => MovieDetailPage(),
+            ),
           );
         },
         child: ClipRRect(
           borderRadius: BorderRadius.all(
             Radius.circular(19.5),
           ),
-          child: Image.network('https://image.tmdb.org/t/p/w500$imgPath',
-              fit: BoxFit.contain),
+          child: FadeInImage.assetNetwork(
+            placeholder: 'images/logo_transparent.png',
+            image: 'https://image.tmdb.org/t/p/w500$imgPath',
+            fit: BoxFit.contain,
+            fadeInCurve: Curves.ease,
+            fadeInDuration: Duration(milliseconds: 100),
+            fadeOutDuration: Duration(milliseconds: 100),
+          ),
         ),
       ),
     );
@@ -228,8 +250,14 @@ class _TileTv extends StatelessWidget {
           borderRadius: BorderRadius.all(
             Radius.circular(19.5),
           ),
-          child: Image.network('https://image.tmdb.org/t/p/w500$imgPath',
-              fit: BoxFit.contain),
+          child: FadeInImage.assetNetwork(
+            placeholder: 'images/logo_transparent.png',
+            image: 'https://image.tmdb.org/t/p/w500$imgPath',
+            fit: BoxFit.contain,
+            fadeInCurve: Curves.ease,
+            fadeInDuration: Duration(milliseconds: 100),
+            fadeOutDuration: Duration(milliseconds: 100),
+          ),
         ),
       ),
     );
