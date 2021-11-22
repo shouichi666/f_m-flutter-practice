@@ -5,6 +5,7 @@ import 'package:movie/pages/Tv_detail.dart';
 // import 'package:movie/ui/color.dart';
 import '../entity/CastDetailModel.dart';
 import '../entity/MovieDetailModel.dart';
+// import '../entity/SearchModel.dart';
 // import '../entity/TvDetailModel.dart';
 import 'movie_detail.dart';
 // import 'tv_detail.dart';
@@ -135,13 +136,13 @@ class _MovieGridList extends StatelessWidget {
       ),
       padding: EdgeInsets.all(0),
       child: GridView.builder(
-        itemCount: movie.length - 1,
+        itemCount: movie.length == 0 ? 0 : movie.length - 1,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 2 / 3,
         ),
         itemBuilder: (BuildContext context, int index) {
-          print(index);
+          // print(index);
           return _panel(movie[index].posterPath, movie[index].id, context);
         },
       ),
@@ -155,7 +156,7 @@ class _MovieGridList extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         await model.update(id);
-        await Navigator.of(context).push(
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => MovieDetailPage(),
           ),
@@ -187,7 +188,7 @@ class _TvGridList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(tv.length);
+    print(tv);
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -205,13 +206,13 @@ class _TvGridList extends StatelessWidget {
       ),
       padding: EdgeInsets.all(0),
       child: GridView.builder(
-          itemCount: tv.length - 1,
+          itemCount: tv.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 2 / 3,
           ),
           itemBuilder: (BuildContext context, int index) {
-            print(index);
+            // print(index);
             return _panel(tv[index].posterPath, tv[index].id, context);
           }),
     );

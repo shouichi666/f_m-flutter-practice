@@ -11,7 +11,6 @@ class Item {
   String name;
   String originalName;
   String? mediaType;
-  double? popularity;
   String? posterPath;
   String? originalLanguage;
   String? originalTitle;
@@ -19,6 +18,7 @@ class Item {
   String overview = "";
   String status = "";
   String firstAirDate = "";
+  String profilePath = "";
 
   Item({
     this.voteCount,
@@ -28,7 +28,6 @@ class Item {
     this.name = "",
     this.originalName = "",
     this.mediaType,
-    this.popularity,
     this.posterPath,
     this.originalLanguage,
     this.originalTitle,
@@ -36,25 +35,26 @@ class Item {
     this.overview = "",
     this.status = "",
     this.firstAirDate = "",
+    this.profilePath = "",
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
-        voteCount: json['vote_count'] ?? '',
+        voteCount: json['vote_count'] ?? 0,
         id: json['id'] ?? '',
-        video: json['video'] ?? '',
-        voteAverage: json['vote_average'] ?? '',
-        name: json['name'] ?? '',
-        originalName: json['original_name'] ?? '',
+        video: json['video'] ?? false,
+        voteAverage: json['vote_average'] ?? 0,
+        name: json['name'] ?? json['title'],
+        originalName: json['original_name'] ?? 'movie',
         mediaType: json['media_type'] ?? '',
-        popularity: json['popularity'] ?? '',
         posterPath: json['poster_path'] ?? '',
         originalLanguage: json['original_language'] ?? '',
         originalTitle: json['original_title'] ?? '',
         overview: json['overview'] ?? '',
         backdropPath: json['backdrop_path'] ?? '',
         status: json['status'] ?? '',
-        firstAirDate: json['first_air_dat'] ?? '');
+        firstAirDate: json['first_air_dat'] ?? '',
+        profilePath: json['profile_path'] ?? '');
   }
 }
 
@@ -99,21 +99,42 @@ class SearchApi {
   //factory constracter
   factory SearchApi() => _instance;
 
-  Future<List<Item>> getMulti(String query) async {
+  Future<List<Item>> getMulti(String query, bool adult, int page) async {
+    // print('-------------------');
+    // print(page);
     var searchUrl =
-        'https://api.themoviedb.org/3/search/multi?api_key=$key&language=ja&query=$query&page=1';
+        'https://api.themoviedb.org/3/search/multi?api_key=$key&language=ja&query=$query&page=$page&include_adult=$adult';
 
+    print(searchUrl);
     final res = await http.get(Uri.parse(searchUrl));
     final List<dynamic> jsonDecode = json.decode(res.body)['results'];
     final data = jsonDecode.map((json) => Item.fromJson(json)).toList();
+
+    print(data);
     return data;
+  }
+
+  Future<int> getTotalPage(String query, bool adult, int page) async {
+    // print('-------------------');
+    // print(page);
+    var searchUrl =
+        'https://api.themoviedb.org/3/search/multi?api_key=$key&language=ja&query=$query&page=$page&include_adult=$adult';
+
+    final res = await http.get(Uri.parse(searchUrl));
+    final int pages = json.decode(res.body)['total_pages'];
+
+    print(pages);
+    return pages;
   }
 }
 
 class SearchModel extends ChangeNotifier {
   ///list Item
   int _id = 1;
+  int page = 1;
+  int totalPage = 1;
   String keyword = '';
+  bool adult = true;
   List<Item> getMulti = [];
 
   bool _isFetching = false;
@@ -124,6 +145,16 @@ class SearchModel extends ChangeNotifier {
 
   // void
 
+  void toggleAdult() {
+    if (adult == true) {
+      adult = false;
+    } else {
+      adult = true;
+    }
+
+    notifyListeners();
+  }
+
   void onChangeKeyword(String text) {
     keyword = text;
     notifyListeners();
@@ -131,14 +162,38 @@ class SearchModel extends ChangeNotifier {
 
   void onDeleteKeyword() {
     keyword = '';
-    print(keyword);
+    getMulti = [];
+    // print(keyword);
+    notifyListeners();
+  }
+
+  Future<void> addPage(query, _page) async {
+    // print(_page);
+    final List ary = await SearchApi().getMulti(query, adult, _page);
+    final List origin = getMulti;
+    getMulti = [...origin, ...ary];
     notifyListeners();
   }
 
   Future<void> onSeach(query) async {
-    getMulti = [];
-    getMulti = await SearchApi().getMulti(query);
-    _isFetching = true;
-    notifyListeners();
+    if (query.length > 0) {
+      getMulti = [];
+
+      print(query);
+      totalPage = await SearchApi().getTotalPage(query, adult, page);
+      getMulti = await SearchApi().getMulti(query, adult, page);
+      _isFetching = true;
+      notifyListeners();
+    }
+  }
+
+  Future<void> onTapSearch(query) async {
+    if (query.length > 0) {
+      getMulti = [];
+      keyword = query;
+      getMulti = await SearchApi().getMulti(query, adult, page);
+      _isFetching = true;
+      notifyListeners();
+    }
   }
 }

@@ -154,7 +154,7 @@ class CastApi {
         'https://api.themoviedb.org/3/person/$id/movie_credits?api_key=$key&language=ja';
 
     final res = await http.get(Uri.parse(searchUrl));
-    print(res.body);
+    // print(res.body);
     final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
     final data = jsonDecode.map((json) => Movie.fromJson(json)).toList();
     return data;
@@ -168,6 +168,7 @@ class CastApi {
     if (res.statusCode == 200) {
       final List<dynamic> jsonDecode = json.decode(res.body)['cast'];
       final data = jsonDecode.map((json) => Tv.fromJson(json)).toList();
+      print(data);
       return data;
     } else {
       final Map<String, dynamic> json = {

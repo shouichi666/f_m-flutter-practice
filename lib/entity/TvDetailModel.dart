@@ -226,6 +226,7 @@ class TvDetailModel extends ChangeNotifier {
   Map<String, dynamic> detail = {};
   List<Tv> smiler = [];
   List<Cast> cast = [];
+  bool adult = false;
 
   bool _isFetching = false;
   bool get isFetching => _isFetching;

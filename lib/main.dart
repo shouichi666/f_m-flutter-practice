@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter',
       theme: ThemeData(
+        brightness: Brightness.dark,
         primarySwatch: primaryBlack,
       ),
       darkTheme: ThemeData.dark(),
@@ -535,7 +536,6 @@ class _TvLastedContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final MovieModel datas = context.watch<MovieModel>();
     final lasted = datas.tvLasted;
-    print(lasted);
     var img = (lasted['backdrop_path'] == null ? 0 : lasted['backdrop_path']);
     var title = (lasted['name'] == null ? '' : lasted['name']);
     if (img != 0) {
